@@ -1,0 +1,12 @@
+@import "tailwindcss";
+:root {
+  --bg: theme(colors.neutral.50);
+}
+
+html,body,#root {
+  height: 100%;
+}
+
+.btn-primary {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white bg-primary-500 hover:bg-primary-600 shadow-sm;
+}
