@@ -1,12 +1,185 @@
+/* 1) Tailwind v4 */
 @import "tailwindcss";
-:root {
-  --bg: theme(colors.neutral.50);
+
+/* 2) Tailwind design tokens (so classes like bg-primary-500, text-neutral-600, shadow-card, rounded-xl still work) */
+@theme {
+  /* ===== COLORS ===== */
+  /* primary */
+  --color-primary-50: #f4f2ff;
+  --color-primary-100: #e9e5ff;
+  --color-primary-200: #cfc9ff;
+  --color-primary-300: #b5adff;
+  --color-primary-400: #8f84ff;
+  --color-primary-500: #6a59ff; /* main purple */
+  --color-primary-600: #5b4be6;
+  --color-primary-700: #4839b3;
+  --color-primary-800: #372a80;
+  --color-primary-900: #251b4d;
+
+  /* accent */
+  --color-accent-50: #fff6ed;
+  --color-accent-100: #ffeddb;
+  --color-accent-200: #ffd5b0;
+  --color-accent-300: #ffb786;
+  --color-accent-400: #ff974f;
+  --color-accent-500: #ff7a1a; /* orange accent */
+  --color-accent-600: #e86612;
+  --color-accent-700: #b8440e;
+  --color-accent-800: #852f0a;
+  --color-accent-900: #581b06;
+
+  /* neutral */
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #0b1220;
+
+  /* shadow utility: shadow-card */
+  --shadow-card: 0 6px 18px rgba(16, 24, 40, 0.08);
+
+  /* radius utility: rounded-xl */
+  --radius-xl: 1rem;
 }
 
-html,body,#root {
-  height: 100%;
+/* 3) Global base styles */
+@layer base {
+  :root {
+    --bg: var(--color-neutral-50);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
 }
 
-.btn-primary {
-  @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white bg-primary-500 hover:bg-primary-600 shadow-sm;
+/* 4) Your custom visual tokens + components */
+:root{
+  --purple-500: #6a59ff;
+  --purple-600: #5b4be6;
+  --accent: #ff7a1a;
+  --muted: #6b7280;
+  --card-bg: #ffffff;
+  --glass: rgba(255,255,255,0.7);
+  --shadow-1: 0 10px 30px rgba(16,24,40,0.08);
+}
+
+/* Card style */
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,252,0.95));
+  border-radius: 18px;
+  box-shadow: var(--shadow-1);
+  padding: 18px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  border: 1px solid rgba(16,24,40,0.04);
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(16,24,40,0.12);
+}
+
+/* Elevated button (gradient) */
+.btn-gradient,
+.btn-primary { /* keep btn-primary working too */
+  background: linear-gradient(90deg, var(--purple-500), var(--purple-600));
+  color: white;
+  padding: 10px 18px;
+  border-radius: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(106,89,255,0.18);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+}
+.btn-gradient:hover,
+.btn-primary:hover {
+  filter: brightness(1.3);
+}
+.btn-gradient:active,
+.btn-primary:active {
+  transform: translateY(1px) scale(.997);
+}
+
+.btn-outline {
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(16,24,40,0.06);
+  color: var(--muted);
+}
+
+/* Short URL pill */
+.short-pill {
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(106,89,255,0.08), rgba(255,122,26,0.03));
+  padding: .45rem .65rem;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--purple-600);
+  font-size: .9rem;
+  border: 1px solid rgba(106,89,255,0.08);
+}
+
+/* Grid layout for cards */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0,1fr));
+  gap: 1rem;
+}
+@media (min-width: 640px){
+  .grid-cards {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+}
+@media (min-width: 1024px){
+  .grid-cards {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+}
+
+/* Input large style */
+.input-hero {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(16,24,40,0.06);
+  box-shadow: 0 8px 20px rgba(16,24,40,0.04);
+  font-size: 1rem;
+}
+
+/* smaller utilities */
+.kicker {
+  font-size: .85rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.small-muted {
+  font-size: .85rem;
+  color: #9aa0a6;
+}
+.meta {
+  font-size: .9rem;
+  color: #6b7280;
+}
+
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.25s ease-out;
 }

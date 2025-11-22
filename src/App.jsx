@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Stats from "./pages/Stats";
 import Navbar from "./components/Navbar";
 import { getToken } from "./lib/auth";
+import Landing from "./pages/Landing"; // 👈 new hero page
 
 function Protected({ children }) {
   const token = getToken();
@@ -13,24 +14,40 @@ function Protected({ children }) {
   return children;
 }
 
-export default function App(){
+export default function App() {
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       <Navbar />
       <main className="max-w-5xl mx-auto p-4">
         <Routes>
+          {/* Public hero / marketing page */}
+          <Route path="/" element={<Landing />} />
+
+          {/* Auth pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={
-            <Protected>
-              <Dashboard />
-            </Protected>
-          }/>
-          <Route path="/links/:code" element={
-            <Protected>
-              <Stats />
-            </Protected>
-          }/>
+
+          {/* Protected app pages */}
+          <Route
+            path="/dashboard"
+            element={
+              <Protected>
+                <Dashboard />
+              </Protected>
+            }
+          />
+
+          <Route
+            path="/links/:code"
+            element={
+              <Protected>
+                <Stats />
+              </Protected>
+            }
+          />
+
+          {/* Optional: catch-all redirect */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </div>

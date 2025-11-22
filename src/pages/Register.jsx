@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import API from "../lib/api";
 import { useNavigate, Link } from "react-router-dom";
 
-export default function Register(){
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [err,setErr] = useState("");
+export default function Register() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [err, setErr] = useState("");
   const nav = useNavigate();
 
   const submit = async (e) => {
@@ -19,19 +19,58 @@ export default function Register(){
   };
 
   return (
-    <div className="max-w-md mx-auto mt-12">
-      <h2 className="text-2xl font-semibold mb-4">Create account</h2>
-      {err && <div className="p-3 mb-3 bg-red-50 text-red-700 rounded">{err}</div>}
-      <form onSubmit={submit} className="bg-white p-6 rounded-xl shadow-card">
-        <label className="block mb-2 text-sm">Email</label>
-        <input value={email} onChange={e=>setEmail(e.target.value)} className="w-full p-3 rounded-md border" />
-        <label className="block mt-4 mb-2 text-sm">Password</label>
-        <input type="password" value={password} onChange={e=>setPassword(e.target.value)} className="w-full p-3 rounded-md border" />
-        <div className="mt-4">
-          <button className="btn-primary">Create account</button>
-          <Link to="/login" className="ml-4 text-sm text-neutral-600">Sign in</Link>
-        </div>
-      </form>
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm">
+        <h2 className="text-xl font-extrabold tracking-tight text-slate-900">
+          Create account
+        </h2>
+        <p className="mt-1 text-sm text-slate-500">
+          Start shortening and tracking your links.
+        </p>
+
+        {err && (
+          <div className="mt-4 rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            {err}
+          </div>
+        )}
+
+        <form onSubmit={submit} className="mt-5 space-y-4">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-600">
+              Email
+            </label>
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-600">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+
+          <div className="mt-3 flex items-center justify-between">
+            <button className="btn-primary" type="submit">
+              Create account
+            </button>
+            <Link
+              to="/login"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900"
+            >
+              Sign in
+            </Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
