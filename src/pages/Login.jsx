@@ -12,7 +12,7 @@ export default function Login() {
 
   const submit = async (e) => {
     e.preventDefault();
-    try {
+    ry {
       setLoading(true);
       const res = await API.post("/api/auth/login", { email, password });
       saveToken(res.data.token);
