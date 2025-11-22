@@ -12,6 +12,6 @@ export default function Toast({ type = "success", message, onClose }) {
       ${type === "error" ? "bg-rose-600" : "bg-indigo-600"}`}
     >
       {message}
-    </dv>
+    </div>
   );
 }
