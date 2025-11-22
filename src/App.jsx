@@ -32,7 +32,7 @@ export default function App() {
             path="/dashboard"
             element={
               <Protected>
-                <Dashboard />
+                <Dashbord />
               </Protected>
             }
           />

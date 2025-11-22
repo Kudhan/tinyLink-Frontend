@@ -239,7 +239,7 @@ export default function Dashboard() {
               }`}
             >
               Next
-            </buttn>
+            </button>
           </div>
         </div>
       )}
