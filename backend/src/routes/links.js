@@ -97,13 +97,88 @@ router.post("/", requireAuth, async (req, res) => {
  * GET /api/links
  * List links for authenticated user.
  */
+// UPDATED GET /api/links — with search & filters
 router.get("/", requireAuth, async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const links = await prisma.link.findMany({
-      where: { ownerId },
-      orderBy: { createdAt: "desc" }
-    });
+
+    // Query params
+    const {
+      q,
+      deleted,
+      minClicks,
+      maxClicks,
+      dateFrom,
+      dateTo,
+      sort = "createdAt",
+      order = "desc",
+      limit = "50",
+      offset = "0"
+    } = req.query;
+
+    // Build Prisma 'where' object
+    const where = { ownerId: Number(ownerId) };
+
+    // deleted filter
+    if (typeof deleted !== "undefined") {
+      // allow `deleted=true` or `deleted=false`
+      where.deleted = deleted === "true" || deleted === "1";
+    }
+
+    // search q => matches code or target (case-insensitive contains)
+    if (q && typeof q === "string") {
+      where.OR = [
+        { code: { contains: q, mode: "insensitive" } },
+        { target: { contains: q, mode: "insensitive" } }
+      ];
+    }
+
+    // clicks range
+    if (minClicks !== undefined || maxClicks !== undefined) {
+      where.totalClicks = {};
+      if (minClicks !== undefined && !Number.isNaN(Number(minClicks))) {
+        where.totalClicks.gte = Number(minClicks);
+      }
+      if (maxClicks !== undefined && !Number.isNaN(Number(maxClicks))) {
+        where.totalClicks.lte = Number(maxClicks);
+      }
+      // if empty object (invalid values) remove it
+      if (Object.keys(where.totalClicks).length === 0) delete where.totalClicks;
+    }
+
+    // createdAt range
+    if (dateFrom || dateTo) {
+      where.createdAt = {};
+      if (dateFrom) {
+        const d = new Date(dateFrom);
+        if (!Number.isNaN(d.getTime())) where.createdAt.gte = d;
+      }
+      if (dateTo) {
+        const d = new Date(dateTo);
+        if (!Number.isNaN(d.getTime())) where.createdAt.lte = d;
+      }
+      if (Object.keys(where.createdAt).length === 0) delete where.createdAt;
+    }
+
+    // sanitize sort & order
+    const allowedSort = new Set(["createdAt", "totalClicks"]);
+    const sortField = allowedSort.has(sort) ? sort : "createdAt";
+    const orderDir = order === "asc" ? "asc" : "desc";
+
+    // pagination
+    const take = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 1000); // cap at 1000
+    const skip = Math.max(parseInt(offset, 10) || 0, 0);
+
+    // fetch matching links
+    const [total, links] = await Promise.all([
+      prisma.link.count({ where }),
+      prisma.link.findMany({
+        where,
+        orderBy: { [sortField]: orderDir },
+        take,
+        skip
+      })
+    ]);
 
     const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
     const result = links.map(l => ({
@@ -116,12 +191,16 @@ router.get("/", requireAuth, async (req, res) => {
       createdAt: l.createdAt
     }));
 
-    return res.json(result);
+    return res.json({
+      meta: { total, limit: take, offset: skip },
+      data: result
+    });
   } catch (err) {
-    console.error("GET /api/links error:", err);
+    console.error("GET /api/links (filters) error:", err);
     return res.status(500).json({ error: "server error" });
   }
 });
+
 
 /**
  * GET /api/links/:code
