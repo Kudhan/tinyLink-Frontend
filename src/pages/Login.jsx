@@ -6,6 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const nav = useNavigate();
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
@@ -56,12 +57,22 @@ export default function Login() {
             <label className="mb-1 block text-xs font-medium text-slate-600">
               Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 pr-12 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-600"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
 
           <div className="mt-3 flex items-center justify-between">
@@ -72,10 +83,10 @@ export default function Login() {
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>
+
             <Link
               to="/register"
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 hover:text
-              "
+              className="text-sm font-medium text-slate-600 hover:text-slate-900"
             >
               Create account
             </Link>
