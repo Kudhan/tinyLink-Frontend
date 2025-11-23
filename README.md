@@ -25,7 +25,7 @@ It allows users to:
 
 # 🌐 Live App
 Frontend (Vercel):  
-**https://YOUR-FRONTEND.vercel.app**
+**[https://tiny-link-frontend-beta.vercel.app/]**
 
 ---
 
