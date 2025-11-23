@@ -9,13 +9,18 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const nav = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
     setErr("");
 
-    // Simple email validator
+    // Prevent re-click
+    if (loading) return;
+
+    // Simple validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setErr("Please enter a valid email address.");
@@ -33,10 +38,13 @@ export default function Register() {
     }
 
     try {
+      setLoading(true);
       await API.post("/api/auth/register", { email, password });
       nav("/login");
     } catch (e) {
       setErr(e.response?.data?.error || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,9 +72,7 @@ export default function Register() {
             <input
               type="email"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
             />
           </div>
@@ -79,9 +85,7 @@ export default function Register() {
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 pr-12 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
               />
               <button
@@ -102,9 +106,7 @@ export default function Register() {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                }}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2.5 pr-12 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
               />
               <button
@@ -118,8 +120,12 @@ export default function Register() {
           </div>
 
           <div className="mt-3 flex items-center justify-between">
-            <button className="btn-primary" type="submit">
-              Create account
+            <button
+              className="btn-primary"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Create account"}
             </button>
             <Link
               to="/login"
