@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "./auth";
 
 const API = axios.create({
-  baseURL: "https://tinylink-backend-1wtm.onrender.com,
+  baseURL: "https://tinylink-backend-1wtm.onrender.com",
   headers: { "Content-Type": "application/json" }
 });
 
